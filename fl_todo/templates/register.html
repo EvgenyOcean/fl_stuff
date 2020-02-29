@@ -1,0 +1,71 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <form action="" method="POST">
+    {{ form.hidden_tag() }}
+    <fieldset class="form-group">
+      <legend class="border-bottom">Jump in to the productivity!</legend>
+      <div class="form-group">
+        {% if form.username.errors %}
+          {{form.username.label}}
+          {{form.username(class="form-control is-invalid")}}
+          <div class="invalid-feedback">
+            {% for error in form.username.errors %}
+              <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+        {% else %}
+          {{form.username.label}}
+          {{form.username(class="form-control")}}
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {% if form.email.errors %}
+          {{form.email.label}}
+          {{form.email(class="form-control is-invalid")}}
+          <div class="invalid-feedback">
+            {% for error in form.email.errors %}
+              <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+        {% else %}
+          {{form.email.label}}
+          {{form.email(class="form-control")}}
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {% if form.password.errors %}
+          {{form.password.label}}
+          {{form.password(class="form-control is-invalid")}}
+          <div class="invalid-feedback">
+            {% for error in form.password.errors %}
+              <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+        {% else %}
+          {{form.password.label}}
+          {{form.password(class="form-control")}}
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {% if form.confirmed.errors %}
+          {{form.confirmed.label}}
+          {{form.confirmed(class="form-control is-invalid")}}
+          <div class="invalid-feedback">
+            {% for error in form.confirmed.errors %}
+              <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+        {% else %}
+          {{form.confirmed.label}}
+          {{form.confirmed(class="form-control")}}
+        {% endif %}
+      </div>
+
+      <div class="border-top">
+        <small class="text-muted">Already have an account? <a href="#">Sign In!</a></small>
+      </div>
+      {{form.submit(class="btn btn-primary mt-4")}}
+    </fieldset>
+  </form>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <form action="" method="POST" class="mb-4">
+    {{form.hidden_tag()}}
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-sm">New task</span>
+      </div>
+        {{form.name(class="form-control")}}
+      <div class="input-group-append">
+        {{form.submit(class="btn btn-outline-info")}}
+      </div>
+    </div> 
+  </form>
+  
+  {% for task in tasks %}
+    <div class="input-group mb-1">
+      <div class="input-group-prepend">
+        <div class="input-group-text">
+          {% if task.done %}
+            <input type="checkbox"  checked aria-label="Checkbox for following text input">
+          {% else %}
+            <input type="checkbox" aria-label="Checkbox for following text input">
+          {% endif %}
+        </div>
+      </div>
+      <input type="text" class="form-control" aria-label="Text input with checkbox" value="{{ task.name }}">
+    </div> 
+  {% endfor %}
+{% endblock %}
+

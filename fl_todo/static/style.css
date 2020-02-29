@@ -1,0 +1,14 @@
+.dis-input:focus{
+  box-shadow: none;
+  border: 1px solid #ced4da;
+  border-left: 1px solid grey;
+}
+
+.dis-input:hover{
+  cursor: default;
+}
+
+.newlist:focus{
+  border: 1px solid #ced4da;
+  box-shadow: 0 0 0 0.2rem rgba(133, 144, 155, 0.25);
+}

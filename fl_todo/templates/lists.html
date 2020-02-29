@@ -1,0 +1,39 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <form action="" method="POST" class="mb-4">
+    {{form.hidden_tag()}}
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text bg-info text-white">Title and Description</span>
+      </div>
+      {{form.title(class="form-control col-md-8 newlist")}}
+      {{form.description(class="form-control col-md-4 newlist")}}
+      <div class="input-group-append">
+        {{form.submit(class="btn btn-outline-info")}}
+      </div>
+    </div>
+    
+  </form>
+  {% for list in lists %}
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <a href="{{ url_for('list_tasks', username=current_user.username, id=list.id) }}" role="button" class="btn btn-outline-secondary">Tasks</a>
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">Edit</a>
+          <a class="dropdown-item" href="#">Delete</a>
+        </div>
+      </div>
+      <input type="text" class="form-control bg-white dis-input" aria-label="Text input with segmented dropdown button" value="{{list.title}}" readonly>
+      {% if list.description %}
+        <div class="input-group-append">
+          <span class="input-group-text text-muted">{{list.description}}</span>
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+{% endblock %}
+
