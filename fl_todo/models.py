@@ -1,6 +1,7 @@
 from datetime import datetime
-from . import db, login_manager
+from . import db, login_manager, app
 from flask_login import UserMixin
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -12,6 +13,21 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), nullable=False, unique=True)
     password = db.Column(db.String(60), nullable=False)
     avatar = db.Column(db.String(20), nullable=False, default='default.png')
+
+    def request_token(self, expire=1800):
+        s = Serializer(app.config['SECRET_KEY'], expire)
+        token = s.dumps({'user_id': self.id}).decode('utf-8')
+        return token
+    
+    @staticmethod
+    def check_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            result = s.loads(token).get('user_id')
+            user = User.query.get(result)
+        except: 
+            return None
+        return user
 
 class List(db.Model):
     id = db.Column(db.Integer, primary_key=True)

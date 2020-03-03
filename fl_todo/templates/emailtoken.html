@@ -1,0 +1,26 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<form method="POST", action="">
+  {{ form.hidden_tag() }}
+  <fieldset class="form-group">
+    <legend class="border-bottom mb-2">Email to send the reset link</legend>
+  </fieldset>
+  <div class="form-group mb-4">
+    {{form.email.label}}
+    {% if form.email.errors %}
+      {{form.email(class="form-control is-invalid")}}
+      <div class="invalid-feedback">
+        {% for err in form.email.errors %}
+          <span>{{ err }}</span>
+        {% endfor %}
+      </div>
+    {% else %}
+      {{form.email(class="form-control")}}
+    {% endif %}
+  </div>
+  <div class="form-group d-flex justify-content-end">
+    {{form.submit(class="btn btn-outline-info")}}
+  </div>
+</form>
+{% endblock %}

@@ -23,6 +23,24 @@ class UserLoginForm(FlaskForm):
     password = PasswordField("Password", validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+# ========================= > Reset Password Area
+
+class UserEmailForResetForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Sumbit')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is None: 
+            raise ValidationError('That user wasn\'t found')
+
+class UserPasswordResetForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=30)])
+    confirmed = PasswordField('Confirm Password', validators=[DataRequired(), Length(min=6, max=30), EqualTo('password', message='The passwords are not the same')])
+    submit = SubmitField('Sumbit')
+
+# ========================= > Reset Password Area
+
 class CreateListForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(), Length(min=3, max=50, message="Title length must be between 3 and 50 syllables")])
     description = StringField('Description')

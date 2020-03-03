@@ -1,8 +1,9 @@
-from . import app, bcrypt, db
+from . import app, bcrypt, db, mail
 from flask import render_template, request, redirect, flash, url_for, abort
 from flask_login import login_user, logout_user, login_required, current_user
-from .forms import UserRegisterForm, UserLoginForm, CreateListForm, CreateTaskForm
+from .forms import UserRegisterForm, UserLoginForm, CreateListForm, CreateTaskForm, UserEmailForResetForm, UserPasswordResetForm
 from .models import User, List, Task
+from flask_mail import Message
 
 
 @app.route('/blog')
@@ -16,7 +17,7 @@ def home():
     else: 
         return redirect(url_for('login'))
 
-@app.route('/<string:username>', methods=['POST', 'GET'])
+@app.route('/users/<string:username>/lists', methods=['POST', 'GET'])
 @login_required
 def user_lists(username):
     if current_user.username == username:
@@ -31,7 +32,7 @@ def user_lists(username):
     else:
         return abort(403)
 
-@app.route('/<string:username>/<int:id>/edit', methods=['POST', 'GET'])
+@app.route('/users/<string:username>/<int:id>/edit', methods=['POST', 'GET'])
 @login_required
 def edit_list(username, id):
     if current_user.username == username:
@@ -46,7 +47,7 @@ def edit_list(username, id):
     
     return abort(403)
 
-@app.route('/<string:username>/<int:id>/delete', methods=['POST'])
+@app.route('/users/<string:username>/<int:id>/delete', methods=['POST'])
 @login_required
 def delete_list(username, id):
     if current_user.username == username:
@@ -59,7 +60,7 @@ def delete_list(username, id):
 
     return abort(403)
 
-@app.route('/<string:username>/<int:id>', methods=['POST', 'GET'])
+@app.route('/users/<string:username>/<int:id>', methods=['POST', 'GET'])
 @login_required
 def tasks(username, id):
     if current_user.username == username:
@@ -74,7 +75,7 @@ def tasks(username, id):
         return render_template('tasks.html', tasks=tasks, list=list, form=form)
     return abort(403)
 
-@app.route('/<string:username>/<int:list_id>/<int:task_id>', methods=['POST', 'GET'])
+@app.route('/users/<string:username>/<int:list_id>/<int:task_id>', methods=['POST', 'GET'])
 @login_required
 def edit_task(username, list_id, task_id):
     if current_user.username == username: 
@@ -94,7 +95,7 @@ def edit_task(username, list_id, task_id):
     else: 
         return abort(403)
 
-@app.route('/<string:username>/<int:list_id>/<int:task_id>/delete', methods=['POST'])
+@app.route('/users/<string:username>/<int:list_id>/<int:task_id>/delete', methods=['POST'])
 @login_required
 def task_delete(username, list_id, task_id):
     if current_user.username == username: 
@@ -148,8 +149,51 @@ def logout():
     logout_user()
     return redirect(url_for('blog'))
 
-
 @app.route('/account')
 @login_required
 def account():
     return 'WAIT!'
+
+# ========================= > Reset Password Area
+
+def send_message(user):
+    token = user.request_token()
+    msg = Message('Reset Password Request', 
+                  sender="noreply@demo.com",
+                  recipients=[user.email])
+    msg.body = f'''Please follow the link to reset your password: 
+    {url_for('new_password', token=token, _external=True)} 
+    If you have no idea whats going on, then just ignore the message. Have a good day :) 
+    '''
+
+    mail.send(msg)
+
+@app.route('/reset', methods=['POST', 'GET'])
+def email_token():
+    if current_user.is_authenticated: 
+        return redirect(url_for('blog'))
+    form = UserEmailForResetForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first() #adding a server error could come in handy
+        send_message(user)
+        flash('The message was successfully sent!', 'success')
+        return redirect(url_for('blog'))
+    else:
+        return render_template('emailtoken.html', form=form)
+
+@app.route('/resetpass/<token>', methods=['POST', 'GET'])
+def new_password(token):
+    form = UserPasswordResetForm()
+    user = User.check_token(token)
+    if user is None: 
+        flash('Token is invalid or has been expired!', 'danger')
+        return redirect(url_for('blog'))
+    if request.method == 'POST' and form.validate_on_submit():
+        hashed_pw = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_pw
+        db.session.commit()
+        flash('Congratulations! Your password was successfully updated!', 'success')
+        return redirect(url_for('home'))
+    return render_template('passwordreset.html', form=form)
+
+# ========================= > Reset Password Area
