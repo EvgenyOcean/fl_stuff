@@ -7,32 +7,66 @@
       <div class="input-group-prepend">
         <span class="input-group-text bg-info text-white">Title and Description</span>
       </div>
-      {{form.title(class="form-control col-md-8 newlist")}}
-      {{form.description(class="form-control col-md-4 newlist")}}
+      {% if form.errors %}
+        {{form.title(class="form-control col-md-8 newlist is-invalid")}}
+        {{form.description(class="form-control col-md-4 newlist")}}
+      {% else %}
+        {{form.title(class="form-control col-md-8 newlist")}}
+        {{form.description(class="form-control col-md-4 newlist")}}
+      {% endif %}
       <div class="input-group-append">
         {{form.submit(class="btn btn-outline-info")}}
       </div>
+      {% if form.errors %}
+        <ul class="d-flex invalid-feedback justify-content-center">
+          {% for error in form.errors %}
+            {% for err in form.errors[error] %}
+              <li>{{ err }}</li>
+            {% endfor %}
+          {% endfor %}
+      {% endif %}
+        </ul>
     </div>
-    
   </form>
+
   {% for list in lists %}
     <div class="input-group mb-3">
       <div class="input-group-prepend">
-        <a href="{{ url_for('list_tasks', username=current_user.username, id=list.id) }}" role="button" class="btn btn-outline-secondary">Tasks</a>
+        <a href="{{ url_for('tasks', username=current_user.username, id=list.id) }}" role="button" class="btn btn-outline-secondary">Tasks</a>
         <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="sr-only">Toggle Dropdown</span>
         </button>
         <div class="dropdown-menu">
-          <a class="dropdown-item" href="#">Edit</a>
-          <a class="dropdown-item" href="#">Delete</a>
+          <a class="dropdown-item" href="{{ url_for('edit_list', username=current_user.username, id=list.id) }}">Edit</a>
+          <a class="dropdown-item temp" data-toggle="modal" data-target="#staticBackdrop{{ list.id }}">Delete</a>
         </div>
       </div>
       <input type="text" class="form-control bg-white dis-input" aria-label="Text input with segmented dropdown button" value="{{list.title}}" readonly>
       {% if list.description %}
-        <div class="input-group-append">
-          <span class="input-group-text text-muted">{{list.description}}</span>
-        </div>
+      <div class="input-group">
+        <textarea class="form-control dis-input mt-1" readonly aria-label="With textarea">{{ list.description }}</textarea>
+      </div>
       {% endif %}
+
+      <!-- Modal -->
+      <div class="modal fade" id="staticBackdrop{{ list.id }}" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop{{ list.id }}Label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdrop{{ list.id }}Label">Delete the list and all its tasks?</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              <form action="{{ url_for('delete_list', username=current_user.username, id=list.id) }}" method="POST">
+                <input type="submit" class="btn btn-danger" data-target="#staticBackdrop{{ list.id }}" value="Delete" />
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   {% endfor %}
 {% endblock %}

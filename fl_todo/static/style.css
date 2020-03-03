@@ -12,3 +12,20 @@
   border: 1px solid #ced4da;
   box-shadow: 0 0 0 0.2rem rgba(133, 144, 155, 0.25);
 }
+
+.is-invalid{
+  border: 2px solid red;
+}
+
+.temp:hover{
+  cursor: pointer;
+}
+
+textarea::-webkit-scrollbar, 
+textarea::-webkit-resizer{
+  display: none;
+}
+
+ul, li{
+  margin-bottom: 0;
+}

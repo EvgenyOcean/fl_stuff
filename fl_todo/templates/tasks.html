@@ -1,7 +1,10 @@
 {% extends 'index.html' %}
 
 {% block content %}
-  <form action="" method="POST" class="mb-4">
+  <fieldset class="mb-2">
+    <legend class="border-bottom text-monospace text-info">{{list.title}}</legend>
+  </fieldset>
+  <form action="" method="POST" class="mb-4" id="taskForm">
     {{form.hidden_tag()}}
     <div class="input-group">
       <div class="input-group-prepend">
@@ -19,13 +22,17 @@
       <div class="input-group-prepend">
         <div class="input-group-text">
           {% if task.done %}
-            <input type="checkbox"  checked aria-label="Checkbox for following text input">
+            <input type="checkbox" checked aria-label="Checkbox for following text input">
           {% else %}
             <input type="checkbox" aria-label="Checkbox for following text input">
           {% endif %}
         </div>
       </div>
       <input type="text" class="form-control" aria-label="Text input with checkbox" value="{{ task.name }}">
+      <div class="input-group-append" id="button-addon4">
+        <button class="btn btn-info btn-sm" type="button">U</button>
+        <button class="btn btn-danger btn-sm" type="button">X</button>
+      </div>
     </div> 
   {% endfor %}
 {% endblock %}

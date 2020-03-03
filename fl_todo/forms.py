@@ -24,7 +24,7 @@ class UserLoginForm(FlaskForm):
     submit = SubmitField('Submit')
 
 class CreateListForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired(), Length(min=5, max=30)])
+    title = StringField('Title', validators=[DataRequired(), Length(min=3, max=50, message="Title length must be between 3 and 50 syllables")])
     description = StringField('Description')
     submit = SubmitField('Create')
 

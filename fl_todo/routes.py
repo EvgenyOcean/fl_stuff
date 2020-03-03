@@ -26,14 +26,14 @@ def user_lists(username):
             new_list = List(title=form.title.data, description=form.description.data, user=current_user)
             db.session.add(new_list)
             db.session.commit()
-            return redirect(url_for('user_lists'))
+            return redirect(url_for('user_lists', username=current_user.username))
         return render_template('lists.html', form=form, lists=lists)
     else:
         return abort(403)
 
 @app.route('/<string:username>/<int:id>', methods=['POST', 'GET'])
 @login_required
-def list_tasks(username, id):
+def tasks(username, id):
     if current_user.username == username:
         form = CreateTaskForm()
         list = List.query.filter_by(id=id).first_or_404()
@@ -42,8 +42,38 @@ def list_tasks(username, id):
             new_task = Task(name=form.name.data, list_id=list.id)
             db.session.add(new_task)
             db.session.commit()
-            # return redirect(url_for('list_tasks')) gotta put it back to work
+            return redirect(url_for('tasks', username=current_user.username, id=list.id)) #to prevent data from being resent
         return render_template('tasks.html', tasks=tasks, list=list, form=form)
+    return abort(403)
+
+@app.route('/<string:username>/<int:id>/edit', methods=['POST', 'GET'])
+@login_required
+def edit_list(username, id):
+    if current_user.username == username:
+        list = List.query.filter_by(id=id).first_or_404()
+        form = CreateListForm()
+        if request.method == 'POST' and form.validate_on_submit():
+            list.title = form.title.data
+            list.description = form.description.data
+            db.session.commit()
+            return redirect(url_for('user_lists', username=current_user.username))
+        return render_template('editlist.html', form=form, list=list)
+    
+    return abort(403)
+
+@app.route('/<string:username>/<int:id>/delete', methods=['POST'])
+@login_required
+def delete_list(username, id):
+    if current_user.username == username:
+        list = List.query.get_or_404(id)
+        print(id)
+        print(list)
+        db.session.delete(list)
+        db.session.commit()
+        return redirect(url_for('user_lists', username=current_user.username))
+
+    return abort(403)
+
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():

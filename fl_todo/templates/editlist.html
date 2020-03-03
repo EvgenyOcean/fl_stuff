@@ -1,0 +1,40 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <form action="" method="POST" class="mb-4">
+    {{form.hidden_tag()}}
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="basic-addon1">Title</span>
+      </div>
+      {% if form.title.errors %}
+        {{form.title(class="form-control is-invalid", value=list.title)}}
+        <div class="invalid-feedback">
+          {% for err in form.title.errors %}
+            <span>{{ err }}</span>
+          {% endfor %}
+        </div>
+      {% else %}
+        {{form.title(class="form-control", value=list.title)}}
+      {% endif %}
+    </div>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text">Description</span>
+      </div>
+      {% if form.description.errors %}
+        {{form.description(class="form-control is-invalid", value=list.description)}}
+      {% for err in form.description.errors %}
+        <div class="invalid-feedback">
+          <span>{{ err }}</span>
+        </div>
+      {% endfor %}
+      {% else %}
+        {{form.description(class="form-control", value=list.description)}}
+      {% endif %}
+    </div>
+    {{form.submit(value="Update", class="btn btn-outline-success mt-3")}}
+  </form>
+
+{% endblock %}
+
