@@ -1,0 +1,53 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <form action="" method="POST" class="mb-4">
+    {{form.hidden_tag()}}
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="basic-addon1">Name</span>
+      </div>
+      {% if form.name.errors %}
+        {{form.name(class="form-control is-invalid", value=task.name)}}
+        <div class="invalid-feedback">
+          {% for err in form.name.errors %}
+            <span>{{ err }}</span>
+          {% endfor %}
+        </div>
+      {% else %}
+        {{form.name(class="form-control", value=task.name)}}
+      {% endif %}
+    </div>
+
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <div class="input-group-text">
+          <span>Done?</span>
+        </div>
+      </div>
+      <div class="input-group-prepend">
+        <div class="input-group-text bg-transparent">
+          {% if task.done %}
+            {{form.done(checked=true)}}
+          {% else %}
+            {{form.done}}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <div class="input-group-text">
+          <span>Date Created</span>
+        </div>
+      </div>
+      <div class="input-group-prepend">
+        <span class="input-group-text bg-transparent">{{task.created.strftime('%b-%d %H:%M')}}</span>
+      </div>
+    </div>
+    {{form.submit(value="Update", class="btn btn-outline-success mt-3")}}
+  </form>
+
+{% endblock %}
+

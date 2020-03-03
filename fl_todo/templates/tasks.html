@@ -22,18 +22,38 @@
       <div class="input-group-prepend">
         <div class="input-group-text">
           {% if task.done %}
-            <input type="checkbox" checked aria-label="Checkbox for following text input">
+            <input type="checkbox" checked disabled aria-label="Checkbox for following text input">
           {% else %}
-            <input type="checkbox" aria-label="Checkbox for following text input">
+            <input type="checkbox" disabled aria-label="Checkbox for following text input">
           {% endif %}
         </div>
       </div>
-      <input type="text" class="form-control" aria-label="Text input with checkbox" value="{{ task.name }}">
+      <input type="text" class="form-control bg-white dis-input" readonly aria-label="Text input with checkbox" value="{{ task.name }}">
       <div class="input-group-append" id="button-addon4">
-        <button class="btn btn-info btn-sm" type="button">U</button>
-        <button class="btn btn-danger btn-sm" type="button">X</button>
+        <a href="{{ url_for('edit_task', username=current_user.username, list_id=list.id, task_id=task.id) }}" class="btn btn-info btn-sm p-2" role="button">U</a>
+        <a href="#" class="btn btn-danger btn-sm p-2" role="button" data-toggle="modal" data-target="#staticBackdrop{{ task.id }}">X</a>
       </div>
     </div> 
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop{{ task.id }}" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop{{ task.id }}Label" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdrop{{ task.id }}Label">Delete the task?</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <form action="{{ url_for('task_delete', username=current_user.username, list_id=list.id, task_id=task.id) }}" method="post">
+              <input type="submit" class="btn btn-danger" role="button" value="Delete"/>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   {% endfor %}
 {% endblock %}
 

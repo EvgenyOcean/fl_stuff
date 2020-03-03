@@ -31,21 +31,6 @@ def user_lists(username):
     else:
         return abort(403)
 
-@app.route('/<string:username>/<int:id>', methods=['POST', 'GET'])
-@login_required
-def tasks(username, id):
-    if current_user.username == username:
-        form = CreateTaskForm()
-        list = List.query.filter_by(id=id).first_or_404()
-        tasks = Task.query.filter_by(list=list) #Maybe a fix needed
-        if request.method == "POST" and form.validate_on_submit():
-            new_task = Task(name=form.name.data, list_id=list.id)
-            db.session.add(new_task)
-            db.session.commit()
-            return redirect(url_for('tasks', username=current_user.username, id=list.id)) #to prevent data from being resent
-        return render_template('tasks.html', tasks=tasks, list=list, form=form)
-    return abort(403)
-
 @app.route('/<string:username>/<int:id>/edit', methods=['POST', 'GET'])
 @login_required
 def edit_list(username, id):
@@ -74,6 +59,56 @@ def delete_list(username, id):
 
     return abort(403)
 
+@app.route('/<string:username>/<int:id>', methods=['POST', 'GET'])
+@login_required
+def tasks(username, id):
+    if current_user.username == username:
+        form = CreateTaskForm()
+        list = List.query.filter_by(id=id).first_or_404()
+        tasks = Task.query.filter_by(list=list) #Maybe a fix needed
+        if request.method == "POST" and form.validate_on_submit():
+            new_task = Task(name=form.name.data, list_id=list.id)
+            db.session.add(new_task)
+            db.session.commit()
+            return redirect(url_for('tasks', username=current_user.username, id=list.id)) #to prevent data from being resent
+        return render_template('tasks.html', tasks=tasks, list=list, form=form)
+    return abort(403)
+
+@app.route('/<string:username>/<int:list_id>/<int:task_id>', methods=['POST', 'GET'])
+@login_required
+def edit_task(username, list_id, task_id):
+    if current_user.username == username: 
+        list = List.query.get_or_404(list_id)
+        task = Task.query.get_or_404(task_id)
+        #Does the list contain the task? 
+        if task.list == list:
+            form = CreateTaskForm()
+            if request.method == 'POST' and form.validate_on_submit():
+                task.name = form.name.data
+                task.done = form.done.data
+                db.session.commit()
+                return redirect(url_for('tasks', username=current_user.username, id=list.id))
+        else: 
+            return abort(404)
+        return render_template('edittask.html', form=form, task=task)
+    else: 
+        return abort(403)
+
+@app.route('/<string:username>/<int:list_id>/<int:task_id>/delete', methods=['POST'])
+@login_required
+def task_delete(username, list_id, task_id):
+    if current_user.username == username: 
+            list = List.query.get_or_404(list_id)
+            task = Task.query.get_or_404(task_id)
+            #Does the list contains the task? 
+            if task.list == list:
+                db.session.delete(task)
+                db.session.commit()
+                return redirect(url_for('tasks', username=current_user.username, id=list.id))
+            else: 
+                return abort(404)
+    else: 
+        return abort(403)
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
