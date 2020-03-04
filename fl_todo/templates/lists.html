@@ -32,12 +32,12 @@
   {% for list in lists %}
     <div class="input-group mb-3">
       <div class="input-group-prepend">
-        <a href="{{ url_for('tasks', username=current_user.username, id=list.id) }}" role="button" class="btn btn-outline-secondary">Tasks</a>
+        <a href="{{ url_for('todos.tasks', username=current_user.username, id=list.id) }}" role="button" class="btn btn-outline-secondary">Tasks</a>
         <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="sr-only">Toggle Dropdown</span>
         </button>
         <div class="dropdown-menu">
-          <a class="dropdown-item" href="{{ url_for('edit_list', username=current_user.username, id=list.id) }}">Edit</a>
+          <a class="dropdown-item" href="{{ url_for('todos.edit_list', username=current_user.username, id=list.id) }}">Edit</a>
           <a class="dropdown-item temp" data-toggle="modal" data-target="#staticBackdrop{{ list.id }}">Delete</a>
         </div>
       </div>
@@ -60,7 +60,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-              <form action="{{ url_for('delete_list', username=current_user.username, id=list.id) }}" method="POST">
+              <form action="{{ url_for('todos.delete_list', username=current_user.username, id=list.id) }}" method="POST">
                 <input type="submit" class="btn btn-danger" data-target="#staticBackdrop{{ list.id }}" value="Delete" />
               </form>
             </div>
