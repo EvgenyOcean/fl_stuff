@@ -1,7 +1,9 @@
+import secrets, os
+from PIL import Image
 from . import app, bcrypt, db, mail
 from flask import render_template, request, redirect, flash, url_for, abort
 from flask_login import login_user, logout_user, login_required, current_user
-from .forms import UserRegisterForm, UserLoginForm, CreateListForm, CreateTaskForm, UserEmailForResetForm, UserPasswordResetForm
+from .forms import UserRegisterForm, UserLoginForm, CreateListForm, CreateTaskForm, UserEmailForResetForm, UserPasswordResetForm, UserAccountForm
 from .models import User, List, Task
 from flask_mail import Message
 
@@ -101,7 +103,7 @@ def task_delete(username, list_id, task_id):
     if current_user.username == username: 
             list = List.query.get_or_404(list_id)
             task = Task.query.get_or_404(task_id)
-            #Does the list contains the task? 
+            #Does the list contain the task? 
             if task.list == list:
                 db.session.delete(task)
                 db.session.commit()
@@ -149,10 +151,34 @@ def logout():
     logout_user()
     return redirect(url_for('blog'))
 
-@app.route('/account')
+# ========================= > Account Area
+
+def edit_avatar(avatar):
+    new_name = secrets.token_hex(8)
+    _, ext = os.path.splitext(avatar.filename)
+    new_name += ext 
+    im = Image.open(avatar)
+    im.thumbnail((128,128))
+    im.save(os.path.join(app.root_path, 'static/avatars', new_name))
+    return new_name
+
+@app.route('/account', methods=['POST', 'GET'])
 @login_required
 def account():
-    return 'WAIT!'
+    form = UserAccountForm()
+    user = User.query.get(current_user.id)
+    if request.method == 'POST' and form.validate_on_submit():
+        user.username = form.username.data
+        user.email = form.email.data
+        if form.avatar.data:
+            new_name = edit_avatar(form.avatar.data)
+            user.avatar = new_name
+        db.session.commit()
+        flash('Your account was successfully updated', 'success')
+        return redirect(url_for('account'))
+    return render_template('account.html', form=form, user=user)
+
+# ========================= > Account Area
 
 # ========================= > Reset Password Area
 

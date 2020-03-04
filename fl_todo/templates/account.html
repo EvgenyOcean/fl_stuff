@@ -1,0 +1,48 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <form method="POST" action="" enctype="multipart/form-data">
+    {{form.hidden_tag()}}
+    <fieldset class="form-group">
+      <legend class="mb-2 border-bottom">{{current_user.username}} Profile</legend>
+      <div class="form-group bg-light p-2">
+        <img src="{{ url_for('static', filename='avatars/' + current_user.avatar) }}" alt="avatar" class="rounded"/>
+        <span class="ml-2 text-muted font-weight-bold text-uppercase">Status is another possibility</span>
+      </div>
+      <div class="form-group">
+        {% if form.username.errors %}
+          {{form.username.label}}{{form.username(class="form-control is-invalid", value=current_user.username)}}
+          <div class="invalid-feedback">
+            {% for err in form.username.errors %}
+              <span>{{ err }}</span>
+            {% endfor %}
+          </div>
+        {% else %}
+          {{form.username.label}}{{form.username(class="form-control", value=current_user.username)}}
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {% if form.email.errors %}
+          {{form.email.label}}{{form.email(class="form-control is-invalid", value=current_user.email)}}
+          <div class="invalid-feedback">
+            {% for err in form.email.errors %}
+              <span>{{ err }}</span>
+            {% endfor %}
+          </div>
+        {% else %}
+          {{form.email.label}}{{form.email(class="form-control", value=current_user.email)}}
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {{form.avatar.label}}
+        {{form.avatar(class="form-control-file btn btn-outline-info")}}
+        {% if form.avatar.errors %}
+          {% for err in form.avatar.errors %}
+            <span class="alert alert-danger">{{ err }}</span>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </fieldset>
+    {{form.submit(class="btn btn-outline-info")}}
+  </form>
+{% endblock %}

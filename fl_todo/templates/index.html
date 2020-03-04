@@ -23,7 +23,7 @@
         </div>
         {% if current_user.username %}
           <div class="navbar-nav ml-auto">
-            <a class="nav-item nav-link" href="{{ url_for('account') }}">Account</a>
+            <a class="nav-item nav-link" href="{{ url_for('account') }}">Account[{{current_user.username}}]</a>
             <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
           </div>
         {% else %}

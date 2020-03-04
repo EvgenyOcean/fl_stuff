@@ -1,7 +1,9 @@
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, EqualTo, Length, Email, ValidationError
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed, FileField
 from .models import User
+from flask_login import current_user
 
 class UserRegisterForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=3, max=16)])
@@ -40,6 +42,24 @@ class UserPasswordResetForm(FlaskForm):
     submit = SubmitField('Sumbit')
 
 # ========================= > Reset Password Area
+
+class UserAccountForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=16)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    avatar = FileField('Change Avatar', validators=[FileAllowed(['png', 'jpeg', 'jpg'], message="That format is not supported")])
+    submit = SubmitField('Update')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user and current_user.email != user.email: 
+            raise ValidationError('That email is already taken')
+        
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user and current_user.username != user.username: 
+            raise ValidationError('That username is already taken')
+
+
 
 class CreateListForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(), Length(min=3, max=50, message="Title length must be between 3 and 50 syllables")])
