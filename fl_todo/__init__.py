@@ -12,7 +12,7 @@ login_manager = LoginManager()
 bcrypt = Bcrypt()
 mail = Mail()
 
-login_manager.login_view = 'login'
+login_manager.login_view = 'users.login'
 login_manager.login_message_category = 'info'
 
 def create_app(config=Config):
@@ -24,11 +24,11 @@ def create_app(config=Config):
     bcrypt.init_app(app)
     mail.init_app(app)
 
-    from fl_todo.main.routes import main
+    from fl_todo.posts.routes import posts
     from fl_todo.users.routes import users
     from fl_todo.todos.routes import todos
 
-    app.register_blueprint(main)
+    app.register_blueprint(posts)
     app.register_blueprint(users)
     app.register_blueprint(todos)
 

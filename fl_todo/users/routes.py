@@ -13,7 +13,7 @@ users = Blueprint('users', __name__)
 @users.route('/register', methods=['POST', 'GET'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
+        return redirect(url_for('posts.home'))
     form = UserRegisterForm()
     if request.method == "POST" and form.validate_on_submit():
         hashed_pw = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -27,7 +27,7 @@ def register():
 @users.route('/login', methods=['POST', 'GET'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
+        return redirect(url_for('posts.home'))
     form = UserLoginForm()
     if request.method == "POST" and form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
@@ -37,7 +37,7 @@ def login():
             if (request.args.get('next')):
                 print(request.args.get('next'))
                 return redirect(request.args.get('next'))
-            return redirect(url_for('main.home'))
+            return redirect(url_for('posts.home'))
         else: 
             flash('Wow, that didn\'t seem correct! :(', category="danger")
     return render_template('login.html', form=form)
@@ -46,7 +46,7 @@ def login():
 @users.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('main.blog'))
+    return redirect(url_for('posts.blog'))
 
 @users.route('/account', methods=['POST', 'GET'])
 @login_required
@@ -67,13 +67,13 @@ def account():
 @users.route('/reset', methods=['POST', 'GET'])
 def email_token():
     if current_user.is_authenticated: 
-        return redirect(url_for('main.blog'))
+        return redirect(url_for('posts.blog'))
     form = UserEmailForResetForm()
     if request.method == 'POST' and form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first() #adding a server error could come in handy
         send_message(user)
         flash('The message was successfully sent!', 'success')
-        return redirect(url_for('main.blog'))
+        return redirect(url_for('posts.blog'))
     else:
         return render_template('emailtoken.html', form=form)
 
@@ -83,11 +83,11 @@ def new_password(token):
     user = User.check_token(token)
     if user is None: 
         flash('Token is invalid or has been expired!', 'danger')
-        return redirect(url_for('main.blog'))
+        return redirect(url_for('posts.blog'))
     if request.method == 'POST' and form.validate_on_submit():
         hashed_pw = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user.password = hashed_pw
         db.session.commit()
         flash('Congratulations! Your password was successfully updated!', 'success')
-        return redirect(url_for('main.home'))
+        return redirect(url_for('posts.home'))
     return render_template('passwordreset.html', form=form)

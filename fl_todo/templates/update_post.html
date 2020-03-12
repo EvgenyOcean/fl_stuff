@@ -1,0 +1,39 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <form action="" method="post">
+    {{form.hidden_tag()}}
+    <fieldset class="form-group">
+      <legend class="border-bottom">Create new post</legend>
+      <div class="form-group">
+        {{form.title.label}}
+        {% if form.title.errors %}
+          {{form.title(class="form-control is-invalid", value=post.title)}}
+          <div class="invalid-feedback">
+            {% for err in form.title.errors %}
+              <span class="text-danger">{{err}}</span>
+            {% endfor %}
+          </div>          
+        {% else %}
+          {{form.title(class="form-control", value=post.title)}}
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        {{form.text.label}}
+        {% if form.text.errors %}
+          {{form.text(class="form-control is-invalid", value=post.text)}}
+          <div class="invalid-feedback">
+            {% for err in form.text.errors %}
+              <span class="text-danger">{{err}}</span>
+            {% endfor %}
+          </div>          
+        {% else %}
+          {{form.text(class="form-control", value=post.text)}}
+        {% endif %}
+      </div>
+
+      {{form.create(class="btn btn-outline-success", value="Update")}}
+    </fieldset>
+  </form>
+{% endblock %}

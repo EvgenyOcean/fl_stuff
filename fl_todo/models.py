@@ -44,3 +44,11 @@ class Task(db.Model):
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     list_id = db.Column(db.Integer, db.ForeignKey('list.id'), nullable=False)
     list = db.relationship('List', backref=db.backref('tasks', lazy=True, cascade="all, delete-orphan"))
+
+class Post(db.Model): 
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(50), nullable=False)
+    text = db.Column(db.Text, nullable=False)
+    created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('posts', lazy=True, cascade='all, delete-orphan'))

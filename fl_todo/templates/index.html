@@ -13,13 +13,13 @@
       {% if current_user.username %}
 
       {% endif %}
-      <a class="navbar-brand mr-4" href="{{ url_for('main.home') }}">My ToDos</a>
+      <a class="navbar-brand mr-4" href="{{ url_for('posts.home') }}">My ToDos</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#datanav" aria-controls="datanav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse pt-1" id="datanav">
         <div class="navbar-nav">
-          <a class="nav-item nav-link" href="{{ url_for('main.blog') }}">Blog</a>
+          <a class="nav-item nav-link" href="{{ url_for('posts.blog') }}">Blog</a>
         </div>
         {% if current_user.username %}
           <div class="navbar-nav ml-auto">
@@ -50,11 +50,10 @@
       </div>
       <div class="col-md-4">
         <div class="list-group">
-          <a href="#" class="list-group-item list-group-item-action list-group-item-info">
-            Cras justo odio
+          <a href="{{url_for('todos.lists', username=current_user.username) if current_user.is_authenticated else url_for('users.login')}}" class="list-group-item list-group-item-action list-group-item-info">
+            Create New Task List
           </a>
-          <a href="#" class="list-group-item list-group-item-action">Dapibus ac facilisis in</a>
-          <a href="#" class="list-group-item list-group-item-action">Morbi leo risus</a>
+          <a href="{{url_for('posts.create_post')}}" class="list-group-item list-group-item-action">Create New Post</a>
         </div>
       </div>
     </div>
