@@ -2,7 +2,9 @@
 fl_todo/env
 fl_todo/__pycache__
 fl_todo/main.db
-fl_todo/static/index.js
 fl_todo/static/avatars/**
 !fl_todo/static/avatars/default.png
 fl_todo/**/__pycache__
+#fl_shutdown
+fl_shutdown
+fl_guessnum

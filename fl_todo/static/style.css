@@ -29,3 +29,26 @@ textarea::-webkit-resizer{
 ul, li{
   margin-bottom: 0;
 }
+
+.calendar{
+  width: 100%;
+  text-align: center;
+  border-collapse: collapse;
+}
+
+.calendar table{
+  border: 1px solid lightgrey;
+  table-layout: fixed;
+  width: 100%;
+}
+
+.calendar td, 
+.calendar th{
+  width: calc(100% / 7);
+  border: 1px solid lightgrey;
+  overflow: hidden;
+}
+
+.calendar td:hover{
+  background-color: lightgray;
+}
