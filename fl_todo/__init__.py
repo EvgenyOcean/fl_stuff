@@ -1,14 +1,11 @@
 import os
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
+from .commands import create_tables
+from .extensions import db, login_manager
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail
 from fl_todo.config import Config
 
-
-db = SQLAlchemy()
-login_manager = LoginManager()
 bcrypt = Bcrypt()
 mail = Mail()
 
@@ -31,5 +28,7 @@ def create_app(config=Config):
     app.register_blueprint(posts)
     app.register_blueprint(users)
     app.register_blueprint(todos)
+
+    app.cli.add_command(create_tables)
 
     return app
